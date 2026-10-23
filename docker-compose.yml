@@ -116,11 +116,12 @@ services:
     networks:
       - blog_network
 
+  
   grafana:
     image: grafana/grafana:latest
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
@@ -132,11 +133,26 @@ services:
     networks:
       - blog_network
 
+  loki:
+    image: grafana/loki:3.5.0
+    restart: unless-stopped
+    command:
+      - "-config.file=/etc/loki/local-config.yaml"
+    ports:
+      - "127.0.0.1:3102:3100"
+    volumes:
+      - ./loki/loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - loki_data:/loki
+   
 networks:
   blog_network:
+
+
 
 volumes:
   mysql_data:
   wordpress_data:
   prometheus_data:
   grafana_data:
+  loki_data:
+  promtail_positions: 
